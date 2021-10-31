@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# make file executable
+# chmod +x ./deleteCmake
+
+rm -r CMakeFiles
+rm cmake_install.cmake
+rm CMakeCache.txt
+
+rm Makefile
+rm test.out
