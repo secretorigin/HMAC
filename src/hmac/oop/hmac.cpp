@@ -31,8 +31,8 @@ HMAC::HMAC(uint8_t* (*HF)(const uint8_t* data, uint64_t size), uint16_t hashSize
   blockSize_ = blockSize;
 
   // init ipad and opad
-  ipad_ = new uint8_t[blockSize_];
-  opad_ = new uint8_t[blockSize_];
+  this->ipad_ = new uint8_t[blockSize_];
+  this->opad_ = new uint8_t[blockSize_];
   for (int i = 0; i < blockSize_; i++) {
     ipad_[i] = IPAD_NUMBER;
     opad_[i] = OPAD_NUMBER;
@@ -79,26 +79,29 @@ uint8_t* HMAC::get(const uint8_t* d, uint64_t dsize, const uint8_t* k, uint64_t 
     k0_ipad[i] = k0[i] ^ ipad_[i];
     k0_opad[i] = k0[i] ^ opad_[i];
   }
-  delete[] k0;
 
   // create first hashed data
   uint8_t* firsthashed = new uint8_t[blockSize_ + dsize];
   std::memcpy(firsthashed, k0_ipad, blockSize_);
   std::memcpy(&(firsthashed[blockSize_]), d, dsize);
-  delete[] k0_ipad;
 
   // get first hash
   uint8_t* firsthash = HF_(firsthashed, blockSize_ + dsize);
-  delete[] firsthashed;
 
   // create last hashed data
   uint8_t* lasthashed = new uint8_t[blockSize_ + hashSize_];
   std::memcpy(lasthashed, k0_opad, blockSize_);
-  delete[] k0_opad;
   std::memcpy(&(lasthashed[blockSize_]), firsthash, hashSize_);
-  delete[] firsthash;
 
   uint8_t* hash = HF_(lasthashed, blockSize_ + hashSize_);
+
+  delete[] k0;
+  delete[] k0_ipad;
+  delete[] k0_opad;
+
+  delete[] firsthashed;
+  delete[] firsthash;
+  
   delete[] lasthashed;
 
   // return last hash
@@ -110,6 +113,6 @@ uint8_t* HMAC::get(const uint8_t* d, uint64_t dsize, const uint8_t* k, uint64_t 
  * @brief delete opad and ipad
  */
 HMAC::~HMAC() {
-  delete[] ipad_;
-  delete[] opad_;
+  delete[] this->ipad_;
+  delete[] this->opad_;
 }

@@ -10,6 +10,7 @@
 
 
 
+#include <iostream>
 #include <cstring>
 #include <cstdint>
 
@@ -68,28 +69,31 @@ uint8_t* hmac(uint8_t* (*HF)(const uint8_t* data, uint64_t size),
     k0_ipad[i] = k0[i] ^ ipad[i];
     k0_opad[i] = k0[i] ^ opad[i];
   }
-  delete[] k0;
-  delete[] ipad;
-  delete[] opad;
 
   // create first hashed data
   uint8_t* firsthashed = new uint8_t[blockSize + dsize];
   std::memcpy(firsthashed, k0_ipad, blockSize);
   std::memcpy(&(firsthashed[blockSize]), d, dsize);
-  delete[] k0_ipad;
 
   // get first hash
   uint8_t* firsthash = HF(firsthashed, blockSize + dsize);
-  delete[] firsthashed;
 
   // create last hashed data
   uint8_t* lasthashed = new uint8_t[blockSize + hashSize];
   std::memcpy(lasthashed, k0_opad, blockSize);
-  delete[] k0_opad;
   std::memcpy(&(lasthashed[blockSize]), firsthash, hashSize);
-  delete[] firsthash;
 
   uint8_t* hash = HF(lasthashed, blockSize + hashSize);
+  
+  delete[] k0;
+  delete[] ipad;
+  delete[] opad;
+  delete[] k0_ipad;
+  delete[] k0_opad;
+
+  delete[] firsthash;
+  delete[] firsthashed;
+
   delete[] lasthashed;
 
   // return last hash
