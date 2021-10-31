@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdexcept>
 
+#include "hmac.h"
 
 
 int main() {
