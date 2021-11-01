@@ -51,7 +51,7 @@ uint8_t* HMAC::get(const uint8_t* d, uint64_t dsize, const uint8_t* k, uint64_t 
   std::memset(k0, 0, blockSize_);
   if (ksize > blockSize_) {
     uint8_t* khash = HF_(k, ksize);
-    uint64_t size = (hashSize_ > blockSize_) ? hashSize_ : blockSize_;
+    uint64_t size = (hashSize_ < blockSize_) ? hashSize_ : blockSize_;
     std::memcpy(k0, khash, size);
     delete[] khash;
   } else {

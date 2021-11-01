@@ -10,7 +10,6 @@
 
 
 
-#include <iostream>
 #include <iomanip>
 #include <sstream>
 #include <cstring>
@@ -174,7 +173,7 @@ uint8_t* sha256(const uint8_t* data, uint64_t size) {
   
   delete[] eData;
 
-  uint8_t* hash = new uint8_t[SHA256_HASH_SIZE];
+  uint8_t* hash = (uint8_t*) new uint8_t[SHA256_HASH_SIZE];
   copyWithEndianConversion(hash, h, SHA256_SQRT_NUM);
   return hash;
 }

@@ -69,10 +69,10 @@ uint8_t* hmac(uint8_t* (*HF)(const uint8_t* data, uint64_t size),
   uint8_t lasthashed[blockSize + hashSize];
   std::memcpy(lasthashed, k0_opad, blockSize);
   std::memcpy(lasthashed + blockSize, firsthash, hashSize);
+  
+  delete[] firsthash;
 
   uint8_t* hash = HF(lasthashed, blockSize + hashSize);
-
-  delete[] firsthash;
 
   // return last hash
   return hash;
