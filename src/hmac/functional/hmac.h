@@ -15,8 +15,8 @@
 
 
 // magic numbers
-#define IPAD_NUMBER 0x36
-#define OPAD_NUMBER 0x5c
+#define HMAC_IPAD_NUMBER 0x36
+#define HMAC_OPAD_NUMBER 0x5c
 
 
 

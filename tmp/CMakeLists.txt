@@ -13,9 +13,9 @@ project(HMAC)
 set(SRCDIR "../src/")
 
 # add your .cpp files here
-add_executable(test.out ../tests/test.cpp ../tests/sha256.cpp ../src/hmac/oop/hmac.cpp)
+add_executable(test.out ../tests/test.cpp ../tests/sha256.cpp ../src/hmac/functional/hmac.cpp)
 
 # add include directory
-target_include_directories(test.out PUBLIC ../src/hmac/oop)
+target_include_directories(test.out PUBLIC ../src/hmac/functional)
 
 target_link_libraries(test.out)

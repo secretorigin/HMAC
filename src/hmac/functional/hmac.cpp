@@ -35,42 +35,30 @@
 uint8_t* hmac(uint8_t* (*HF)(const uint8_t* data, uint64_t size), 
               uint16_t hashSize, uint16_t blockSize, 
               const uint8_t* d, uint64_t dsize, const uint8_t* k, uint64_t ksize) {
-  // init ipad and opad
-  uint8_t* ipad = new uint8_t[blockSize];
-  uint8_t* opad = new uint8_t[blockSize];
-  for (int i = 0; i < blockSize; i++) {
-    ipad[i] = IPAD_NUMBER;
-    opad[i] = OPAD_NUMBER;
-  }
-
   // get expanded key
-  uint8_t* k0 = new uint8_t[blockSize];
+  uint8_t k0[blockSize];
+  std::memset(k0, 0, blockSize);
   if (ksize > blockSize) {
-    uint8_t* hashedkey = HF(k, ksize);
-    for (int i = 0 ; i < blockSize; i++)
-      if (i < hashSize)
-        k0[i] = hashedkey[i];
-      else
-        k0[i] = 0;
-    delete[] hashedkey;
-  } else if (ksize <= blockSize) {
-    for (int i = 0 ; i < blockSize; i++)
-      if (i < ksize)
-        k0[i] = k[i];
-      else
-        k0[i] = 0;
+    uint8_t* khash = HF(k, ksize);
+    uint64_t size = (hashSize > blockSize) ? hashSize : blockSize;
+    std::memcpy(k0, khash, size);
+    delete[] khash;
+  } else {
+    std::memcpy(k0, k, ksize);
   }
 
   // ipad and opad operations
-  uint8_t* k0_ipad = new uint8_t[blockSize];
-  uint8_t* k0_opad = new uint8_t[blockSize];
+  uint8_t k0_ipad[blockSize];
+  uint8_t k0_opad[blockSize];
+  std::memset(k0_ipad, HMAC_IPAD_NUMBER, blockSize);
+  std::memset(k0_opad, HMAC_OPAD_NUMBER, blockSize);
   for (int i = 0; i < blockSize; i++) {
-    k0_ipad[i] = k0[i] ^ ipad[i];
-    k0_opad[i] = k0[i] ^ opad[i];
+    k0_ipad[i] ^= k0[i];
+    k0_opad[i] ^= k0[i];
   }
 
   // create first hashed data
-  uint8_t* firsthashed = new uint8_t[blockSize + dsize];
+  uint8_t firsthashed[blockSize + dsize];
   std::memcpy(firsthashed, k0_ipad, blockSize);
   std::memcpy(&(firsthashed[blockSize]), d, dsize);
 
@@ -78,22 +66,13 @@ uint8_t* hmac(uint8_t* (*HF)(const uint8_t* data, uint64_t size),
   uint8_t* firsthash = HF(firsthashed, blockSize + dsize);
 
   // create last hashed data
-  uint8_t* lasthashed = new uint8_t[blockSize + hashSize];
+  uint8_t lasthashed[blockSize + hashSize];
   std::memcpy(lasthashed, k0_opad, blockSize);
   std::memcpy(&(lasthashed[blockSize]), firsthash, hashSize);
 
-  uint8_t* hash = HF(lasthashed, blockSize + hashSize);
-  
-  delete[] k0;
-  delete[] ipad;
-  delete[] opad;
-  delete[] k0_ipad;
-  delete[] k0_opad;
-
   delete[] firsthash;
-  delete[] firsthashed;
 
-  delete[] lasthashed;
+  uint8_t* hash = HF(lasthashed, blockSize + hashSize);
 
   // return last hash
   return hash;

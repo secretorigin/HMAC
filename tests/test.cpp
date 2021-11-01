@@ -7,14 +7,19 @@
 
 int main() {
   try {
-    HMAC* hmac = new HMAC(sha256, SHA256_HASH_SIZE, 32);
+    std::string kstr = "text";
+    std::string dstr = "sometext";
 
-    uint64_t keySize = 32;
-    uint8_t* key = new uint8_t[keySize];
-    uint64_t dataSize = 1024;
-    uint8_t* data = new uint8_t[dataSize];
+    uint8_t* key = new uint8_t[kstr.length()];
+    uint8_t* data = new uint8_t[dstr.length()];
 
-    uint8_t* hash = hmac->get(data, dataSize, key, keySize);
+    for (int i = 0; i < kstr.length(); i++)
+      key[i] = kstr[i];
+
+    for (int i = 0; i < dstr.length(); i++)
+      data[i] = dstr[i];
+
+    uint8_t* hash = hmac(sha256, SHA256_HASH_SIZE, SHA256_BLOCK_SIZE, data, dstr.length(), key, kstr.length());
     
     std::cout << std::hex;
     for (int i = 0; i < SHA256_HASH_SIZE; i++)
@@ -24,8 +29,6 @@ int main() {
     delete[] data;
     delete[] key;
     delete[] hash;
-
-    //delete hmac;
 
   } catch(const std::exception& excpt) {
     std::cout << excpt.what() << "\n";

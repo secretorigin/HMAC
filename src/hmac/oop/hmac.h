@@ -15,8 +15,8 @@
 
 
 // magic numbers
-#define IPAD_NUMBER 0x36
-#define OPAD_NUMBER 0x5c
+#define HMAC_IPAD_NUMBER 0x36
+#define HMAC_OPAD_NUMBER 0x5c
 
 
 
@@ -32,16 +32,10 @@ public:
   // get hash
   uint8_t* get(const uint8_t* d, uint64_t dsize, const uint8_t* k, uint64_t ksize) const;
 
-  ~HMAC();
-
 private:
   uint8_t* (*HF_)(const uint8_t* data, uint64_t size); ///< hash function
   uint16_t hashSize_; ///< size of hash returned by HF
   uint16_t blockSize_; ///< size of block
-
-  // arrays, not constant because of variable sizes
-  uint8_t* ipad_; ///< ipad array [blockSize_]
-  uint8_t* opad_; ///< opad array [blockSize_]
 };
 
 

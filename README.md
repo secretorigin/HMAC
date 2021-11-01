@@ -1,5 +1,7 @@
 <h1>HMAC</h1>
 
+HASH IS NOT VALID, i do not why((
+
 HMAC (sometimes expanded as either keyed-hash message authentication code or hash-based message authentication code) is a specific type of message authentication code (MAC) involving a cryptographic hash function and a secret cryptographic key. As with any MAC, it may be used to simultaneously verify both the data integrity and the authenticity of a message.[wiki](https://en.wikipedia.org/wiki/HMAC)
 
 Can be used with [SHA256](https://github.com/p2034/SHA256) (../SHA256)

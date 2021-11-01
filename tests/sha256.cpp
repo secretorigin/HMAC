@@ -10,6 +10,7 @@
 
 
 
+#include <iostream>
 #include <iomanip>
 #include <sstream>
 #include <cstring>
@@ -52,7 +53,7 @@ static inline uint32_t rightrotate(uint32_t n, unsigned int c) {
  * in the end (8 bytes);
  */
 static uint8_t* preprocessor(const uint8_t* data, uint64_t size, uint64_t& newSize) {
-  newSize = size + 1 + SHA256_BLOCK_SIZE - ((size + 1) % SHA256_BLOCK_SIZE);
+  newSize = size + 9 + SHA256_BLOCK_SIZE - ((size + 9) % SHA256_BLOCK_SIZE);
   uint8_t* newArray = new uint8_t[newSize];
 
   // set it to 10000000
@@ -130,7 +131,7 @@ uint8_t* sha256(const uint8_t* data, uint64_t size) {
 
   // chunk processor
   for (int y = 0; y < numOfChunks; y++) {
-    uint32_t* eeData = new uint32_t[SHA256_BLOCK_SIZE]; ///< data extended one more time
+    uint32_t eeData[SHA256_BLOCK_SIZE]; ///< data extended one more time
     // copy chunk, very strange way because of big-endian order in sha256
     copyWithEndianConversion(eeData, &(eData[y * SHA256_BLOCK_SIZE]), SHA256_BLOCK_SIZE/DIFF_32_8);
     // extend the first 16 words into the remaining 48 words w[16..63] of the message schedule array
@@ -169,8 +170,6 @@ uint8_t* sha256(const uint8_t* data, uint64_t size) {
     // add a[] array to h[] array
     for (int j = 0; j < SHA256_SQRT_NUM; j++)
       h[j] = h[j] + a[j];
-
-    delete[] eeData;
   }
   
   delete[] eData;
