@@ -32,15 +32,15 @@
  *
  * Produce hash using hash function and hmac algorithm.
  */
-uint8_t* hmac(uint8_t* (*HF)(const uint8_t* data, uint64_t size), 
-              uint16_t hashSize, uint16_t blockSize, 
+uint8_t* hmac(uint8_t* (*HF)(const uint8_t* data, uint64_t size),
+              uint16_t hashSize, uint16_t blockSize,
               const uint8_t* d, uint64_t dsize, const uint8_t* k, uint64_t ksize) {
   // get expanded key
   uint8_t k0[blockSize];
   std::memset(k0, 0, blockSize);
   if (ksize > blockSize) {
     uint8_t* khash = HF(k, ksize);
-    uint64_t size = (hashSize > blockSize) ? hashSize : blockSize;
+    uint64_t size = (hashSize < blockSize) ? hashSize : blockSize;
     std::memcpy(k0, khash, size);
     delete[] khash;
   } else {
@@ -60,7 +60,7 @@ uint8_t* hmac(uint8_t* (*HF)(const uint8_t* data, uint64_t size),
   // create first hashed data
   uint8_t firsthashed[blockSize + dsize];
   std::memcpy(firsthashed, k0_ipad, blockSize);
-  std::memcpy(&(firsthashed[blockSize]), d, dsize);
+  std::memcpy(firsthashed + blockSize, d, dsize);
 
   // get first hash
   uint8_t* firsthash = HF(firsthashed, blockSize + dsize);
@@ -68,11 +68,11 @@ uint8_t* hmac(uint8_t* (*HF)(const uint8_t* data, uint64_t size),
   // create last hashed data
   uint8_t lasthashed[blockSize + hashSize];
   std::memcpy(lasthashed, k0_opad, blockSize);
-  std::memcpy(&(lasthashed[blockSize]), firsthash, hashSize);
-
-  delete[] firsthash;
+  std::memcpy(lasthashed + blockSize, firsthash, hashSize);
 
   uint8_t* hash = HF(lasthashed, blockSize + hashSize);
+
+  delete[] firsthash;
 
   // return last hash
   return hash;

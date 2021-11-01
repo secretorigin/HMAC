@@ -71,7 +71,7 @@ uint8_t* HMAC::get(const uint8_t* d, uint64_t dsize, const uint8_t* k, uint64_t 
   // create first hashed data
   uint8_t firsthashed[blockSize_ + dsize];
   std::memcpy(firsthashed, k0_ipad, blockSize_);
-  std::memcpy(&(firsthashed[blockSize_]), d, dsize);
+  std::memcpy(firsthashed + blockSize_, d, dsize);
 
   // get first hash
   uint8_t* firsthash = HF_(firsthashed, blockSize_ + dsize);
@@ -79,7 +79,7 @@ uint8_t* HMAC::get(const uint8_t* d, uint64_t dsize, const uint8_t* k, uint64_t 
   // create last hashed data
   uint8_t lasthashed[blockSize_ + hashSize_];
   std::memcpy(lasthashed, k0_opad, blockSize_);
-  std::memcpy(&(lasthashed[blockSize_]), firsthash, hashSize_);
+  std::memcpy(lasthashed + blockSize_, firsthash, hashSize_);
 
   delete[] firsthash;
 

@@ -7,8 +7,8 @@
 
 int main() {
   try {
-    std::string kstr = "text";
-    std::string dstr = "sometext";
+    std::string kstr = "textjkdfhsgasbflsdkfbsadhjkfvasdhjkfvasdhjkfgvsdfvasdfgvkasdhfvasdghkfvgasdvfghkasdvfghasvhf";
+    std::string dstr = "sometextdasdjfhbasjhkldfasdfbasdhjlfjkasdhfsdhfbsdhjbfhsdbfhsdfhsdbfhsdb";
 
     uint8_t* key = new uint8_t[kstr.length()];
     uint8_t* data = new uint8_t[dstr.length()];
@@ -23,7 +23,7 @@ int main() {
     
     std::cout << std::hex;
     for (int i = 0; i < SHA256_HASH_SIZE; i++)
-      std::cout << (unsigned int)hash[i];
+      std::cout << (unsigned int)hash[i] << " ";
     std::cout << std::endl;
 
     delete[] data;
