@@ -73,6 +73,14 @@ static uint8_t* preprocessor(const uint8_t* data, uint64_t size, uint64_t& newSi
 
 
 
+static void swap(uint8_t* v1, uint8_t* v2) {
+  uint8_t h = *v1;
+  *v1 = *v2;
+  *v2 = h;
+}
+
+
+
 /**
  * @brief copy with big-little endian conversion
  * 
@@ -82,9 +90,9 @@ static uint8_t* preprocessor(const uint8_t* data, uint64_t size, uint64_t& newSi
  */
 static void copyWithEndianConversion(uint32_t* dest, const uint8_t* src, uint64_t srcSize) {
   for (int i = 0; i < srcSize; i++)
-      for (int j = 0; j < DIFF_32_8; j++)
-        std::memcpy((reinterpret_cast<uint8_t*>(dest) + i * DIFF_32_8 + j),
-                    &(src[i * DIFF_32_8 + (DIFF_32_8 - 1) - j]), sizeof(uint8_t));
+    for (int j = 0; j < DIFF_32_8; j++)
+      std::memcpy((reinterpret_cast<uint8_t*>(dest) + i * DIFF_32_8 + j),
+                  &(src[i * DIFF_32_8 + (DIFF_32_8 - 1) - j]), sizeof(uint8_t));
 }
 
 
@@ -97,9 +105,17 @@ static void copyWithEndianConversion(uint32_t* dest, const uint8_t* src, uint64_
  * @param [in] srcSize size of copyed data
  */
 static void copyWithEndianConversion(uint8_t* dest, const uint32_t* src, uint64_t srcSize) {
+  /* this returns error on mac os
   for (int i = 0; i < srcSize; i++)
     for (int j = 0; j < DIFF_32_8; j++)
       std::memcpy(&(dest[i * DIFF_32_8 + j]), reinterpret_cast<const int8_t*>(&src[i]) + (DIFF_32_8 - 1) - j, sizeof(uint32_t));
+  */
+  
+  for (int i = 0; i < srcSize; i++) {
+    std::memcpy(&(dest[i * DIFF_32_8]), &(src[i]), sizeof(uint32_t));
+    swap(&(dest[i * DIFF_32_8]), &(dest[i * DIFF_32_8 + 3]));
+    swap(&(dest[i * DIFF_32_8 + 1]), &(dest[i * DIFF_32_8 + 2]));
+  }
 }
 
 
